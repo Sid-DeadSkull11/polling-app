@@ -1,19 +1,42 @@
 {% extends "base.html" %}
-{% block title %}Poll Details | PollSpace{% endblock %}
 
 {% block content %}
-<div class="form-card">
-     <span class="tag">POLL #{{ poll.id }}</span>
-     <h1>{{ poll.question }}</h1>
-     <p>Poll options:</p>
 
-     {% for option in options %}
-     <div class="option-item">{{ loop.index }}. {{ option.option_text }}</div>
-     {% endfor %}
+<div class="container">
 
-     <p class="note">
-          Voting functionality will be available in Version 2.
-     </p>
-     <a href="/" class="button">Back to Home</a>
+     <div class="card">
+
+          <h2>{{ poll.question }}</h2>
+
+          <h4>Choose your option and cast your vote</h4>
+
+          <form method="POST" action="{{ url_for('vote', poll_id=poll.id) }}">
+
+               <label for="voter_id">Voter ID</label>
+
+               <input type="text" id="voter_id" name="voter_id" placeholder="Enter your voter ID" required>
+
+               <h4>Poll Options</h4>
+
+               {% for option in options %}
+
+               <div>
+                    <label>
+                         <input type="radio" name="option_id" value="{{ option.id }}" required>
+                         {{ option.option_text }}
+                    </label>
+               </div>
+
+               {% endfor %}
+
+               <button type="submit">Submit Vote</button>
+
+          </form>
+
+          <a href="{{ url_for('index') }}">Back to Home</a>
+
+     </div>
+
 </div>
+
 {% endblock %}
