@@ -3,27 +3,27 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_USERNAME = "siddeadskull11"
         IMAGE_NAME = "siddeadskull11/polling-app:v1"
+        PYTHON_EXE = "C:\\Users\\siddh\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe"
         DOCKER_EXE = "C:\\Users\\siddh\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe"
     }
 
     stages {
         stage('Checkout') {
             steps {
-                echo 'Source code is available in the Jenkins workspace'
+                checkout scm
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                bat 'py -m pip install -r requirements.txt'
+                bat '"%PYTHON_EXE%" -m pip install -r requirements.txt'
             }
         }
 
         stage('Run Tests') {
             steps {
-                bat 'py -m pytest -v'
+                bat '"%PYTHON_EXE%" -m pytest -v'
             }
         }
 
@@ -56,7 +56,7 @@ pipeline {
 
     post {
         success {
-            echo 'V1 image successfully pushed to Docker Hub!'
+            echo 'V1 successfully pushed to Docker Hub!'
         }
         failure {
             echo 'V1 pipeline failed. Check the console output.'
