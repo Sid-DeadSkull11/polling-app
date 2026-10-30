@@ -6,34 +6,61 @@
 
      <div class="card">
 
-          <h2>{{ poll.question }}</h2>
+          <h2>Poll #{{ poll.id }}</h2>
 
-          <h4>Choose your option and cast your vote</h4>
+          <h1>{{ poll.question }}</h1>
+
+          <h3>Poll Options</h3>
 
           <form method="POST" action="{{ url_for('vote', poll_id=poll.id) }}">
 
-               <label for="voter_id">Voter ID</label>
+               <div class="form-group">
 
-               <input type="text" id="voter_id" name="voter_id" placeholder="Enter your voter ID" required>
+                    <label for="voter_id">Enter Your Voter ID</label>
 
-               <h4>Poll Options</h4>
+                    <input type="text" id="voter_id" name="voter_id" placeholder="Enter your voter ID" required>
+
+               </div>
+
+               <h3>Select Your Option</h3>
 
                {% for option in options %}
 
-               <div>
+               <div class="option-item">
+
                     <label>
                          <input type="radio" name="option_id" value="{{ option.id }}" required>
+
                          {{ option.option_text }}
                     </label>
+
                </div>
 
                {% endfor %}
 
-               <button type="submit">Submit Vote</button>
+               <button type="submit">
+                    Submit Vote
+               </button>
 
           </form>
 
-          <a href="{{ url_for('index') }}">Back to Home</a>
+          <hr>
+
+          <div class="actions">
+
+               <a href="{{ url_for('results', poll_id=poll.id) }}">
+                    <button type="button">
+                         View Poll Results
+                    </button>
+               </a>
+
+               <a href="{{ url_for('index') }}">
+                    <button type="button">
+                         Back to Home
+                    </button>
+               </a>
+
+          </div>
 
      </div>
 

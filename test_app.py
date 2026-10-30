@@ -221,3 +221,46 @@ def test_different_voters_can_vote(client, app):
         db.close()
 
     assert count == 2
+
+
+def test_results_page(client):
+    create_test_poll(client)
+
+    response = client.get("/poll/1/results")
+
+    assert response.status_code == 200
+    assert b"Poll Results" in response.data
+    assert b"Total Votes: 0" in response.data
+
+
+def test_results_after_voting(client):
+    create_test_poll(client)
+
+    client.post("/poll/1/vote", data={
+        "voter_id": "student01",
+        "option_id": "1"
+    })
+
+    client.post("/poll/1/vote", data={
+        "voter_id": "student02",
+        "option_id": "1"
+    })
+
+    client.post("/poll/1/vote", data={
+        "voter_id": "student03",
+        "option_id": "2"
+    })
+
+    response = client.get("/poll/1/results")
+
+    assert response.status_code == 200
+    assert b"Total Votes: 3" in response.data
+    assert b"66.67%" in response.data
+    assert b"33.33%" in response.data
+
+
+def test_results_poll_not_found(client):
+    response = client.get("/poll/999/results")
+
+    assert response.status_code == 404
+    assert b"Poll not found" in response.data

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+     <div class="card">
+
+          <h1>Poll Results</h1>
+
+          <h2>{{ poll.question }}</h2>
+
+          <div class="result-summary">
+               <h3>Total Votes: {{ total_votes }}</h3>
+          </div>
+
+          {% if total_votes == 0 %}
+
+          <p>No votes have been submitted yet.</p>
+
+          {% else %}
+
+          <h3>Voting Breakdown</h3>
+
+          {% for result in results %}
+
+          <div class="result-item" style="margin-bottom: 25px;">
+
+               <h4>{{ result.option_text }}</h4>
+
+               <p>
+                    {{ result.vote_count }} votes
+                    ({{ result.percentage }}%)
+               </p>
+
+               <progress value="{{ result.percentage }}" max="100" style="width: 100%; height: 20px;">
+               </progress>
+
+          </div>
+
+          {% endfor %}
+
+          <hr>
+
+          <h3>Leading Option</h3>
+
+          {% if leaders %}
+
+          {% for leader in leaders %}
+          <p><strong>{{ leader }}</strong></p>
+          {% endfor %}
+
+          {% else %}
+
+          <p>No votes yet.</p>
+
+          {% endif %}
+
+          {% endif %}
+
+          <div style="margin-top: 25px;">
+
+               <a href="{{ url_for('poll_detail', poll_id=poll.id) }}">
+                    Back to Poll
+               </a>
+
+               <br><br>
+
+               <a href="{{ url_for('index') }}">
+                    Back to Home
+               </a>
+
+          </div>
+
+     </div>
+
+</div>
+
+{% endblock %}

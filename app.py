@@ -159,7 +159,10 @@ def create_app(test_config=None):
         if poll is None:
             return "Poll not found", 404
 
-        voter_id = request.form.get("voter_id", "").strip().casefold()
+        voter_id = request.form.get(
+            "voter_id", ""
+        ).strip().casefold()
+
         option_id = request.form.get("option_id", "").strip()
 
         if not voter_id:
@@ -201,6 +204,77 @@ def create_app(test_config=None):
             flash("You have already voted in this poll.", "error")
 
         return redirect(url_for("poll_detail", poll_id=poll_id))
+
+    # V3: Results Dashboard
+    @app.route("/poll/<int:poll_id>/results")
+    def results(poll_id):
+
+        db = get_db()
+
+        poll = db.execute(
+            "SELECT * FROM polls WHERE id = ?",
+            (poll_id,)
+        ).fetchone()
+
+        if poll is None:
+            return "Poll not found", 404
+
+        results_data = db.execute(
+            """
+            SELECT
+                options.id,
+                options.option_text,
+                COUNT(votes.id) AS vote_count
+            FROM options
+            LEFT JOIN votes
+                ON options.id = votes.option_id
+                AND votes.poll_id = options.poll_id
+            WHERE options.poll_id = ?
+            GROUP BY options.id, options.option_text
+            ORDER BY options.id
+            """,
+            (poll_id,)
+        ).fetchall()
+
+        total_votes = sum(
+            row["vote_count"] for row in results_data
+        )
+
+        results_list = []
+
+        for row in results_data:
+
+            percentage = (
+                (row["vote_count"] / total_votes) * 100
+                if total_votes > 0 else 0
+            )
+
+            results_list.append({
+                "id": row["id"],
+                "option_text": row["option_text"],
+                "vote_count": row["vote_count"],
+                "percentage": round(percentage, 2)
+            })
+
+        highest_votes = max(
+            [row["vote_count"] for row in results_list],
+            default=0
+        )
+
+        leaders = [
+            row["option_text"]
+            for row in results_list
+            if highest_votes > 0
+            and row["vote_count"] == highest_votes
+        ]
+
+        return render_template(
+            "results.html",
+            poll=poll,
+            results=results_list,
+            total_votes=total_votes,
+            leaders=leaders
+        )
 
     return app
 
