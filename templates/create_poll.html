@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Create Poll | PollSpace{% endblock %}
+
+{% block content %}
+<div class="form-card">
+     <h1>Create a New Poll</h1>
+     <p>Enter your question and add at least two options.</p>
+
+     <form method="POST">
+          <label>Poll Question</label>
+          <input type="text" name="question" placeholder="What would you like to ask?" required>
+
+          <label>Poll Options</label>
+          <div id="options">
+               <input type="text" name="options" placeholder="Option 1" required>
+               <input type="text" name="options" placeholder="Option 2" required>
+          </div>
+
+          <button type="button" class="secondary" onclick="addOption()">+ Add Option</button>
+
+          <button type="submit" class="button">Create Poll</button>
+     </form>
+</div>
+
+<script>
+     function addOption() {
+          const container = document.getElementById("options");
+          const input = document.createElement("input");
+          input.type = "text";
+          input.name = "options";
+          input.placeholder = "Another option";
+          input.required = true;
+          container.appendChild(input);
+     }
+</script>
+{% endblock %}

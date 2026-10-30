@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Poll Details | PollSpace{% endblock %}
+
+{% block content %}
+<div class="form-card">
+     <span class="tag">POLL #{{ poll.id }}</span>
+     <h1>{{ poll.question }}</h1>
+     <p>Poll options:</p>
+
+     {% for option in options %}
+     <div class="option-item">{{ loop.index }}. {{ option.option_text }}</div>
+     {% endfor %}
+
+     <p class="note">
+          Voting functionality will be available in Version 2.
+     </p>
+     <a href="/" class="button">Back to Home</a>
+</div>
+{% endblock %}
