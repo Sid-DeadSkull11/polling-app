@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: polling-v1
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: polling-v1
+
+  template:
+    metadata:
+      labels:
+        app: polling-v1
+
+    spec:
+      containers:
+        - name: polling-app
+          image: siddeadskull11/polling-app:v1
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - containerPort: 5000
